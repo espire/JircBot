@@ -1,0 +1,4 @@
+JircBot is a dead-simple IRC bot written in Java. Designed for OperaNet, it could be easily configured for others. Documentation is not nearly as high a priority as improving the code.
+
+JircBot is copyright (c) Eli Spiro 2011, and made available under the GNU General Public License v3.
+For more information about the license, visit http://gnu.org/licenses/gpl.html.
