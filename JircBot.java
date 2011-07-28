@@ -6,25 +6,34 @@ import java.util.Stack;
 import java.util.Random;
 import java.lang.String;
 
-// For web page title get
-import java.io.DataInputStream;
+// importing the xml file
+//import java.io.File; already have it!
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Element;
+
+// For web page title get, to be added eventually
+/*import java.io.DataInputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.regex.Pattern;*/
 
 public class JircBot {
 
 	// The server to connect to and our details.
-	static String server = "irc.opera.com";
-	static String nick = "jircbot";
-	static String login = "jircbot";
-	static String name = "Sir Jircshire Bottingtons IV";
-	static String password = "tobcrij";
+	static String server;
+	static String login;
+	static String password;
+	static String nick;
+	static String name;
 
 	// The channel which the bot will join.
-	static String channel = "#jircbot";
-	static String joinMsg = "I am no jerk, for I am jircbot.";
+	static String channel;
+	static String joinMessage;
 
 	// Timestamp format
 	public static final String timeFormat = "HH:mm:ss";
@@ -45,6 +54,7 @@ public class JircBot {
 	// Did we snark to this line already?
 	static boolean snarked = false;
 
+	// snark: string, string, string, int -> might say something
 	// Randomly reply to a given keyword
 	public static void snark(String line, String lookFor, String snark, int chance) throws Exception {
 		if(!snarked) {
@@ -85,7 +95,50 @@ public class JircBot {
 		return sdf.format(cal.getTime());
 	}
 
+	public static String getElementText(Element ele, String tagName) {
+		NodeList nl = ele.getElementsByTagName(tagName);
+		Element el = (Element)nl.item(0);
+		return el.getFirstChild().getNodeValue();
+	}
+
+	public static void loadConnection() {
+		// Let's read an Ex Em El!
+		try {
+			File connectionInfoFile = new File("jircbot.xml");
+			DocumentBuilderFactory connectionInfoFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder connectionInfoBuilder = connectionInfoFactory.newDocumentBuilder();
+			Document connectionInfoDocument = connectionInfoBuilder.parse(connectionInfoFile);
+			connectionInfoDocument.getDocumentElement().normalize();
+			
+			System.out.println("Reading configuration file jircbot.xml...");
+			Node connectionNode = connectionInfoDocument.getDocumentElement();
+			NodeList connectionNodeList = connectionNode.getChildNodes();
+			
+			server = getElementText((Element)connectionNode, "server");
+			login = getElementText((Element)connectionNode, "login");
+			password = getElementText((Element)connectionNode, "password");
+			nick = getElementText((Element)connectionNode, "nick");
+			name = getElementText((Element)connectionNode, "name");
+			channel = getElementText((Element)connectionNode, "channel");
+			joinMessage = getElementText((Element)connectionNode, "joinMessage");
+			
+			System.out.println("Server: " + server);
+			System.out.println("Login: " + login);
+			System.out.println("Password: " + password);
+			System.out.println("Nick: " + nick);
+			System.out.println("Name: " + name);
+			System.out.println("Channel: " + channel);
+			System.out.println("Join message: " + joinMessage);
+			
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	public static void main(String[] args) throws Exception {
+		
+		loadConnection();
 
 		// Create the transcripts
 		transcript = new Stack<String>();
@@ -102,10 +155,8 @@ public class JircBot {
 
 			// Connect directly to the IRC server.
 			socket = new Socket(server, 6667);
-			writer = new BufferedWriter(
-				new OutputStreamWriter(socket.getOutputStream( )));
-			reader = new BufferedReader(
-				new InputStreamReader(socket.getInputStream( )));
+			writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+			reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
 			// Log on to the server.
 			writer.write("NICK " + nick + "\r\n");
@@ -139,7 +190,7 @@ public class JircBot {
 			}
 			catch (Exception e) {}
 
-			say(joinMsg);
+			say(joinMessage);
 
 			// Keep reading lines from the server.
 			while ((line = reader.readLine( )) != null) {

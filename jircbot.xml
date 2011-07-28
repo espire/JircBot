@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<jircbot>
+	<server>irc.opera.com</server>
+	<login>jircbot</login>
+	<password>tobcrij</password>
+	<nick>jircbot</nick>
+	<name>Sir Jircshire Bottingtons IV</name>
+	<channel>#jircbot</channel>
+	<joinMessage>I am no jerk; I am jircbot.</joinMessage>
+</jircbot>
