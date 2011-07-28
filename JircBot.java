@@ -13,7 +13,7 @@ import java.net.URLConnection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Miku {
+public class JircBot {
 
 	// The server to connect to and our details.
 	static String server = "irc.opera.com";
