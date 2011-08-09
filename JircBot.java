@@ -34,10 +34,9 @@ public class JircBot {
 	static BufferedReader reader;
 	static Socket socket;
 
-	// Message transcript
-	static Stack<Message> transcript;
-	static Stack<Message> tempScript;
-	static Stack<Message> lastFive;
+	// Message transcripts
+	static Stack<Message> transcript; // main transcript
+	static Stack<Message> tempScript; // temporary transcript for lst module
 
 	// Random number generator
 	static Random randomGenerator = new Random();
@@ -49,7 +48,7 @@ public class JircBot {
 	// Randomly reply to a given keyword
 	public static void snark(Message message, String lookFor, String snark, int chance) throws Exception {
 		if(!snarked) {
-			if(message.content.toLowerCase().contains(lookFor)) {
+			if(message.type.equals("PRIVMSG") && message.content.toLowerCase().contains(lookFor)) {
 				if(randomGenerator.nextInt(chance) == 0) {
 					say(snark);
 					snarked = true;
@@ -79,7 +78,6 @@ public class JircBot {
 		// Create the transcripts
 		transcript = new Stack<Message>();
 		tempScript = new Stack<Message>();
-		lastFive = new Stack<Message>();
 
 		// Temporary variables for manipulation
 		Message tempMessage;
@@ -87,6 +85,7 @@ public class JircBot {
 		int percent = 0;
 		int index = 0;
 
+		// OUTER LOOP
 		// Program loop begins here. If we get disconnected, it will return to the top.
 		while(true) {
 
@@ -107,7 +106,7 @@ public class JircBot {
 					// We are now logged in.
 					break;
 				}
-				// The nick is already in use
+				// Quit if the nick is already in use
 				else if (line.indexOf("433") >= 0) {
 					System.out.println("Nickname is already in use.");
 					return;
@@ -122,6 +121,7 @@ public class JircBot {
 			writer.write("JOIN " + channel + "\r\n");
 			writer.flush();
 
+			// Delay for half a second, to make sure that the channel is joined before saying the Join Message.
 			try {
 				Thread.sleep(500);
 			}
@@ -129,32 +129,43 @@ public class JircBot {
 
 			say(joinMessage);
 
+			// MAIN LOOP
 			// Keep reading lines from the server.
-			while ((line = reader.readLine( )) != null) {
-				
-				System.out.println(line);
+			while ((line = reader.readLine()) != null) {
 				
 				// We haven't snarked yet
 				snarked = false;
 
-				if (line.toLowerCase().startsWith(":" + nick)) {}
-				else if (line.toLowerCase().startsWith(":" + server)) {}
-				else if (line.toLowerCase().startsWith(":chanserv!")) {}
-				else if (line.toLowerCase().startsWith(":chanserv!")) {}
+				System.out.println(line);
+				if (line.toLowerCase().startsWith(":" + nick) || line.toLowerCase().startsWith(":" + server) || line.toLowerCase().startsWith(":chanserv!")) {
+					;
+				}
 
 				else if (line.toLowerCase().startsWith("ping ")) {
+					System.out.print("|");
+					for(int i = 0; i < randomGenerator.nextInt(16); i++) {
+						System.out.print(" ");
+					}
+					System.out.print(".");
+					for(int i = 0; i < randomGenerator.nextInt(16); i++) {
+						System.out.print(" ");
+					}
+					System.out.println("ping!");
+					
 					// We must respond to PINGs to avoid being disconnected.
 					writer.write("PONG " + line.substring(5) + "\r\n");
 					writer.flush();
 				}
+				
 				else {
 					// create a Message object from the line
 					Message message = new Message(line);
-					// Print the raw line received by the bot.
-					//System.out.println(message);
 					
-					if (message.content.toLowerCase().startsWith("!lst")) {
-
+					// Print the (nicely parsed) line received by the bot.
+					System.out.println(message);
+					
+					// LST MODULE
+					if (message.type.equals("PRIVMSG") && message.content.toLowerCase().startsWith("!lst")) {
 						tempScript.clear();
 						tempScript.addAll(transcript);
 						if(tempScript.empty()) {
@@ -171,7 +182,7 @@ public class JircBot {
 							words = "";
 						}
 					}
-					else if(message.content.toLowerCase().startsWith("!moar")) {
+					else if(message.type.equals("PRIVMSG") && message.content.toLowerCase().startsWith("!moar")) {
 						if(tempScript.empty()) {
 							say("No moar.");
 						}
@@ -186,12 +197,14 @@ public class JircBot {
 							words = "";
 						}
 					}
-					else if(message.content.toLowerCase().startsWith("!topic ")) {
+					
+					// TOPIC MODULE
+					else if(message.type.equals("PRIVMSG") && message.content.toLowerCase().startsWith("!topic ")) {
 						writer.write("TOPIC " + channel + " :" + message.content.substring(7) + "\r\n");
 						writer.flush();
 						System.out.println("TOPIC " + channel + " :" + message.content.substring(7));
 					}
-					else if(message.content.toLowerCase().equals("!topic")) {
+					else if(message.type.equals("PRIVMSG") && message.content.toLowerCase().equals("!topic")) {
 						writer.write("TOPIC " + channel + "\r\n");
 						writer.flush();
 						tempMessage = new Message(reader.readLine());
@@ -200,7 +213,9 @@ public class JircBot {
 						tempMessage = new Message(reader.readLine());
 						System.out.println(words);
 					}
-					else if(message.content.toLowerCase().startsWith("!vote ")) {
+					
+					// VOTE MODULE
+					else if(message.type.equals("PRIVMSG") && message.content.toLowerCase().startsWith("!vote ")) {
 						percent = randomGenerator.nextInt(100) + 1;
 						if(message.content.length() > 6) {
 							words = message.content.substring(6);
@@ -215,6 +230,7 @@ public class JircBot {
 						}
 					}
 
+					// SNARK MODULE
 					else {
 						snark(message, "<3", "in bed!", 2);
 						snark(message, "love", "in bed!", 2);
@@ -226,7 +242,8 @@ public class JircBot {
 						snark(message, " try ", "in bed!", 12);
 						snark(message, ":o", ":O", 3);
 					}
-
+					
+					// TRANSCRIPT MODULE
 					if(line.toLowerCase().contains("privmsg")) {
 						transcript.push(message);
 					}
