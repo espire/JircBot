@@ -1,7 +1,5 @@
 import java.io.*;
 import java.net.*;
-//import java.text.SimpleDateFormat;
-//import java.util.Calendar;
 import java.util.Stack;
 import java.util.Random;
 import java.lang.String;
@@ -24,10 +22,7 @@ public class JircBot {
 	static String channel;
 	static String joinMessage;
 	
-	static ConfigReader conf;
-
-	// Timestamp format
-	public static final String timeFormat = "HH:mm:ss";
+	static XmlReader conf;
 
 	// I/O streams
 	static BufferedWriter writer;
@@ -41,39 +36,29 @@ public class JircBot {
 	// Random number generator
 	static Random randomGenerator = new Random();
 
-	// Did we snark to this line already?
-	static boolean snarked = false;
-
-	// snark: string, string, string, int -> might say something
-	// Randomly reply to a given keyword
-	public static void snark(Message message, String lookFor, String snark, int chance) throws Exception {
-		if(!snarked) {
-			if(message.type.equals("PRIVMSG") && message.content.toLowerCase().contains(lookFor)) {
-				if(randomGenerator.nextInt(chance) == 0) {
-					say(snark);
-					snarked = true;
-				}
-			}
-		}
-	}
+	static Snark snarker;
 
 	// Message the channel and flush the buffer.
 	public static void say(String line) throws Exception {
-		writer.write("PRIVMSG " + channel + " :" + line + "\r\n");
-		writer.flush();
+		if (!line.equals("")) {
+			writer.write("PRIVMSG " + channel + " :" + line + "\r\n");
+			writer.flush();
+		}
 	}
 
 	public static void main(String[] args) throws Exception {
 	
-		conf = new ConfigReader("jircbot.xml");
+		conf = new XmlReader("jircbot.xml");
 
-		server = conf.server;
-		login = conf.login;
-		password = conf.password;
-		nick = conf.nick;
-		name = conf.name;
-		channel = conf.channel;
-		joinMessage = conf.joinMessage;
+		server = conf.getElement("server");
+		login = conf.getElement("login");
+		password = conf.getElement("password");
+		nick = conf.getElement("nick");
+		name = conf.getElement("name");
+		channel = conf.getElement("channel");
+		joinMessage = conf.getElement("joinMessage");
+		
+		snarker = new Snark(nick);
 
 		// Create the transcripts
 		transcript = new Stack<Message>();
@@ -132,14 +117,8 @@ public class JircBot {
 			// MAIN LOOP
 			// Keep reading lines from the server.
 			while ((line = reader.readLine()) != null) {
-				
-				// We haven't snarked yet
-				snarked = false;
 
-				System.out.println(line);
-				if (line.toLowerCase().startsWith(":" + nick) || line.toLowerCase().startsWith(":" + server) || line.toLowerCase().startsWith(":chanserv!")) {
-					;
-				}
+				if (line.toLowerCase().startsWith(":" + nick) || line.toLowerCase().startsWith(":" + server) || line.toLowerCase().startsWith(":chanserv!")) {}
 
 				else if (line.toLowerCase().startsWith("ping ")) {
 					System.out.print("|");
@@ -232,15 +211,7 @@ public class JircBot {
 
 					// SNARK MODULE
 					else {
-						snark(message, "<3", "in bed!", 2);
-						snark(message, "love", "in bed!", 2);
-						snark(message, " want ", "in bed!", 12);
-						snark(message, " can ", "in bed!", 12);
-						snark(message, " like", "in bed!", 12);
-						snark(message, " should", "in bed!", 12);
-						snark(message, " use ", "in bed!", 12);
-						snark(message, " try ", "in bed!", 12);
-						snark(message, ":o", ":O", 3);
+						say(snarker.feed(message));
 					}
 					
 					// TRANSCRIPT MODULE

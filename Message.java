@@ -23,11 +23,8 @@ public class Message {
 		sdf = new SimpleDateFormat(timeFormat);
 		timeStamp = sdf.format(cal.getTime());
 		
-		// remove the leading :
-		line = line.substring(1);
-		
-		// author is up to the first !
-		author = line.substring(0, line.indexOf('!'));
+		// skip the leading :, author is up to the first !
+		author = line.substring(1, line.indexOf('!'));
 		
 		// remove up to and including the !
 		line = line.substring(line.indexOf('!') + 1);
@@ -59,9 +56,7 @@ public class Message {
 			// remove up to and including the space, then the :
 			line = line.substring(line.indexOf(' ') + 2);
 			
-			System.out.println(line.substring(0, 7));
-			
-			if(line.startsWith(((char)1) + "ACTION")) {
+			if (line.startsWith(((char)1) + "ACTION")) {
 				type = "ACTION";
 				
 				// remove up to and including the first space
@@ -84,8 +79,11 @@ public class Message {
 		else if (type.equals("ACTION")) {
 			return "[" + timeStamp + "] *" + author + " " + content;
 		}
+		else if (type.equals("NOTICE")) {
+			return "[" + timeStamp + "] NOTICE <" + author + "> " + content;
+		}		
 		else {
-			return "[" + timeStamp + "] <" + author + "> " + content;
+			return "I don't know what to do with this message:\n" + raw;
 		}
 	}
 }
