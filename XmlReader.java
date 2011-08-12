@@ -28,7 +28,7 @@ public class XmlReader {
 		NodeList nodeList = root.getChildNodes();
 		String[][] ret = new String[nodeList.getLength()][2];
 		
-		for(int i = 0; i < nodeList.getLength(); i++) {
+		for (int i = 0; i < nodeList.getLength(); i++) {
 			ret[i][0] = nodeList.item(i).getNodeValue();
 			ret[i][1] = nodeList.item(i).getFirstChild().getNodeValue();
 		}
@@ -39,7 +39,7 @@ public class XmlReader {
 	public ArrayList<Element> toList() {
 		ArrayList<Element> list = new ArrayList<Element>();
 		NodeList nodeList = root.getChildNodes();
-		for(int i = 0; i < nodeList.getLength(); i++) {
+		for (int i = 0; i < nodeList.getLength(); i++) {
 			if (nodeList.item(i).getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
 				list.add((Element)(nodeList.item(i)));
 			}
@@ -58,7 +58,7 @@ public class XmlReader {
 			System.err.println("Reading XML file " + file + "...");
 			root = connectionInfoDocument.getDocumentElement();
 		}
-		catch(Exception e) {
+		catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

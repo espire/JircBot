@@ -82,6 +82,9 @@ public class Message {
 		else if (type.equals("NOTICE")) {
 			return "[" + timeStamp + "] NOTICE <" + author + "> " + content;
 		}		
+		else if (type.equals("PRIVMSG")) {
+			return "[" + timeStamp + "] <" + author + "> " + content;
+		}
 		else {
 			return "I don't know what to do with this message:\n" + raw;
 		}

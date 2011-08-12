@@ -37,6 +37,7 @@ public class JircBot {
 	static Random randomGenerator = new Random();
 
 	static Snark snarker;
+	static Vote vote;
 
 	// Message the channel and flush the buffer.
 	public static void say(String line) throws Exception {
@@ -58,7 +59,8 @@ public class JircBot {
 		channel = conf.getElement("channel");
 		joinMessage = conf.getElement("joinMessage");
 		
-		snarker = new Snark(nick);
+		snarker = new Snark();
+		vote = new Vote();
 
 		// Create the transcripts
 		transcript = new Stack<Message>();
@@ -72,7 +74,7 @@ public class JircBot {
 
 		// OUTER LOOP
 		// Program loop begins here. If we get disconnected, it will return to the top.
-		while(true) {
+		while (true) {
 
 			// Connect directly to the IRC server.
 			socket = new Socket(server, 6667);
@@ -147,12 +149,12 @@ public class JircBot {
 					if (message.type.equals("PRIVMSG") && message.content.toLowerCase().startsWith("!lst")) {
 						tempScript.clear();
 						tempScript.addAll(transcript);
-						if(tempScript.empty()) {
+						if (tempScript.empty()) {
 							say("Nothing to list.");
 						}
 						else {
-							for(int i=0;i<5 && !tempScript.isEmpty(); i++) {
-								if(i>0) {
+							for (int i=0;i<5 && !tempScript.isEmpty(); i++) {
+								if (i>0) {
 									words = "  " + words;
 								}
 								words = tempScript.pop() + words;
@@ -161,13 +163,13 @@ public class JircBot {
 							words = "";
 						}
 					}
-					else if(message.type.equals("PRIVMSG") && message.content.toLowerCase().startsWith("!moar")) {
-						if(tempScript.empty()) {
+					else if (message.type.equals("PRIVMSG") && message.content.toLowerCase().startsWith("!moar")) {
+						if (tempScript.empty()) {
 							say("No moar.");
 						}
 						else {
-							for(int i=0;i<5 && !tempScript.isEmpty(); i++) {
-								if(i>0) {
+							for (int i=0;i<5 && !tempScript.isEmpty(); i++) {
+								if (i>0) {
 									words = "  " + words;
 								}
 								words = tempScript.pop() + words;
@@ -178,12 +180,12 @@ public class JircBot {
 					}
 					
 					// TOPIC MODULE
-					else if(message.type.equals("PRIVMSG") && message.content.toLowerCase().startsWith("!topic ")) {
+					else if (message.type.equals("PRIVMSG") && message.content.toLowerCase().startsWith("!topic ")) {
 						writer.write("TOPIC " + channel + " :" + message.content.substring(7) + "\r\n");
 						writer.flush();
 						System.out.println("TOPIC " + channel + " :" + message.content.substring(7));
 					}
-					else if(message.type.equals("PRIVMSG") && message.content.toLowerCase().equals("!topic")) {
+					else if (message.type.equals("PRIVMSG") && message.content.toLowerCase().equals("!topic")) {
 						writer.write("TOPIC " + channel + "\r\n");
 						writer.flush();
 						tempMessage = new Message(reader.readLine());
@@ -193,32 +195,17 @@ public class JircBot {
 						System.out.println(words);
 					}
 					
-					// VOTE MODULE
-					else if(message.type.equals("PRIVMSG") && message.content.toLowerCase().startsWith("!vote ")) {
-						percent = randomGenerator.nextInt(100) + 1;
-						if(message.content.length() > 6) {
-							words = message.content.substring(6);
-							say(words + "? Yes: " + percent + " No: " + (100-percent));
-							words = "";
-							}
-						else {
-							say("Yes: " + percent + " No: " + (100-percent));
-						}
-						if(percent == 50) {
-							say("~");
-						}
-					}
-
-					// SNARK MODULE
-					else {
+					//  MODULES
+					else if (message.type.equals("PRIVMSG") && !message.author.equals(nick)) {
+						say(vote.feed(message));
 						say(snarker.feed(message));
 					}
 					
 					// TRANSCRIPT MODULE
-					if(line.toLowerCase().contains("privmsg")) {
+					if (line.toLowerCase().contains("privmsg")) {
 						transcript.push(message);
 					}
-					if(line.equals(
+					if (line.equals(
 					":NickServ!services@opera.com NOTICE " + login + " :Password accepted -- you are now recognized.")) {
 						transcript.clear();
 					}
