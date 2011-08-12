@@ -7,8 +7,16 @@ class Snark {
 	// Random number generator
 	Random randomGenerator = new Random();
 	
-	public Vote() {
-		System.err.println("Loading Vote module:");
+	ArrayList<Element> list;
+	
+	public Snark() {
+		System.err.println("Loading Snark module:");
+		XmlReader snarkXml = new XmlReader("snark.xml");
+		list = snarkXml.toList();
+		
+		for (Element e : list) {
+			System.out.println("Snark: " + e.getAttribute("in") + " -> " + e.getAttribute("out") + ", 1 out of " + e.getAttribute("chance") + " times.");
+		}
 		
 		System.err.println();
 	}
