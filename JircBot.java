@@ -29,15 +29,13 @@ public class JircBot {
 	static BufferedReader reader;
 	static Socket socket;
 
-	// Message transcripts
-	static Stack<Message> transcript; // main transcript
-	static Stack<Message> tempScript; // temporary transcript for lst module
-
 	// Random number generator
 	static Random randomGenerator = new Random();
 
 	static Snark snarker;
 	static Vote vote;
+	static Transcript transcript;
+	static Topic topic;
 
 	// Message the channel and flush the buffer.
 	public static void say(String line) throws Exception {
@@ -49,8 +47,11 @@ public class JircBot {
 
 	public static void main(String[] args) throws Exception {
 	
+		// load in the main configuration XML file
 		conf = new XmlReader("jircbot.xml");
+		System.out.println();
 
+		// save all the delicious configuration info from the XML file
 		server = conf.getElement("server");
 		login = conf.getElement("login");
 		password = conf.getElement("password");
@@ -58,13 +59,6 @@ public class JircBot {
 		name = conf.getElement("name");
 		channel = conf.getElement("channel");
 		joinMessage = conf.getElement("joinMessage");
-		
-		snarker = new Snark();
-		vote = new Vote();
-
-		// Create the transcripts
-		transcript = new Stack<Message>();
-		tempScript = new Stack<Message>();
 
 		// Temporary variables for manipulation
 		Message tempMessage;
@@ -80,6 +74,12 @@ public class JircBot {
 			socket = new Socket(server, 6667);
 			writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 			reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+			// Initialize modules.
+			snarker = new Snark();
+			vote = new Vote();
+			transcript = new Transcript();
+			topic = new Topic(writer, reader, channel);
 
 			// Log on to the server.
 			writer.write("NICK " + nick + "\r\n");
@@ -145,71 +145,14 @@ public class JircBot {
 					// Print the (nicely parsed) line received by the bot.
 					System.out.println(message);
 					
-					// LST MODULE
-					if (message.type.equals("PRIVMSG") && message.content.toLowerCase().startsWith("!lst")) {
-						tempScript.clear();
-						tempScript.addAll(transcript);
-						if (tempScript.empty()) {
-							say("Nothing to list.");
-						}
-						else {
-							for (int i=0;i<5 && !tempScript.isEmpty(); i++) {
-								if (i>0) {
-									words = "  " + words;
-								}
-								words = tempScript.pop() + words;
-							}
-							say(words);
-							words = "";
-						}
-					}
-					else if (message.type.equals("PRIVMSG") && message.content.toLowerCase().startsWith("!moar")) {
-						if (tempScript.empty()) {
-							say("No moar.");
-						}
-						else {
-							for (int i=0;i<5 && !tempScript.isEmpty(); i++) {
-								if (i>0) {
-									words = "  " + words;
-								}
-								words = tempScript.pop() + words;
-							}
-							say(words);
-							words = "";
-						}
-					}
-					
-					// TOPIC MODULE
-					else if (message.type.equals("PRIVMSG") && message.content.toLowerCase().startsWith("!topic ")) {
-						writer.write("TOPIC " + channel + " :" + message.content.substring(7) + "\r\n");
-						writer.flush();
-						System.out.println("TOPIC " + channel + " :" + message.content.substring(7));
-					}
-					else if (message.type.equals("PRIVMSG") && message.content.toLowerCase().equals("!topic")) {
-						writer.write("TOPIC " + channel + "\r\n");
-						writer.flush();
-						tempMessage = new Message(reader.readLine());
-						System.out.println(tempMessage);
-						say("Topic is: " + tempMessage.content);
-						tempMessage = new Message(reader.readLine());
-						System.out.println(words);
-					}
-					
 					//  MODULES
-					else if (message.type.equals("PRIVMSG") && !message.author.equals(nick)) {
+					if ((message.type.equals("PRIVMSG") || message.type.equals("ACTION")) && !message.author.equals(nick)) {
 						say(vote.feed(message));
 						say(snarker.feed(message));
+						say(transcript.feed(message));
+						say(topic.feed(message));
 					}
 					
-					// TRANSCRIPT MODULE
-					if (line.toLowerCase().contains("privmsg")) {
-						transcript.push(message);
-					}
-					if (line.equals(
-					":NickServ!services@opera.com NOTICE " + login + " :Password accepted -- you are now recognized.")) {
-						transcript.clear();
-					}
-
 				} // else
 			} // while read
 		} // while true

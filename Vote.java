@@ -1,5 +1,3 @@
-import org.w3c.dom.Element;
-import java.util.ArrayList;
 import java.util.Random;
 
 class Vote {
@@ -9,7 +7,6 @@ class Vote {
 	
 	public Vote() {
 		System.err.println("Loading Vote module...");
-		
 		System.err.println();
 	}
 	
@@ -23,7 +20,7 @@ class Vote {
 			if (message.content.length() > 6 && message.content.toLowerCase().startsWith("!vote ")) {
 				ret = message.content.substring(6) + "? Yes: " + percent + " No: " + (100 - percent);
 			}
-			else if (message.content.length() == 5) {
+			else if (message.content.length() <= 6) {
 				ret = "Yes: " + percent + " No: " + (100 - percent);
 			}
 			
