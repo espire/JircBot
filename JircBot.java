@@ -71,6 +71,7 @@ public class JircBot {
 		while (true) {
 
 			// Connect directly to the IRC server.
+			System.err.println("Establishing a connection with the server...");
 			socket = new Socket(server, 6667);
 			writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 			reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -118,7 +119,7 @@ public class JircBot {
 
 			// MAIN LOOP
 			// Keep reading lines from the server.
-			while ((line = reader.readLine()) != null) {
+			mainLoop: while ((line = reader.readLine()) != null) {
 
 				if (line.toLowerCase().startsWith(":" + nick) || line.toLowerCase().startsWith(":" + server) || line.toLowerCase().startsWith(":chanserv!")) {}
 
@@ -147,6 +148,10 @@ public class JircBot {
 					
 					//  MODULES
 					if ((message.type.equals("PRIVMSG") || message.type.equals("ACTION")) && !message.author.equals(nick)) {
+						if(message.content.toLowerCase().equals("!reload")) {
+							System.err.println();
+							break mainLoop;
+						}
 						say(vote.feed(message));
 						say(snarker.feed(message));
 						say(transcript.feed(message));
@@ -155,6 +160,12 @@ public class JircBot {
 					
 				} // else
 			} // while read
+			
+			// close the socket and wait 5 seconds for the server to acknowledge that the connection is closed before we try to connect again
+			// shorter wait times resulted in a broken pipe exception
+			socket.close();
+			Thread.sleep(5000);
+			
 		} // while true
 	} // main
 } //class
