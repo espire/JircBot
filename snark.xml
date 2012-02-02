@@ -1,12 +1,13 @@
 <?xml version="1.0"?>
 <snark>
-	<snark in = "&lt;3" out = "in bed!" chance = "2" />
-	<snark in = "love" out = "in bed!" chance = "2" />
-	<snark in = "want" out = "in bed!" chance = "12" />
-	<snark in = "can" out = "in bed!" chance = "12" />
-	<snark in = "like" out = "in bed!" chance = "12" />
-	<snark in = "should" out = "in bed!" chance = "12" />
-	<snark in = "use" out = "in bed!" chance = "12" />
-	<snark in = "try" out = "in bed!" chance = "12" />
-	<snark in = ":o" out = ":O" chance = "3" />
+	<snark in = "&lt;3" out = "in bed!" chance = "2" author = "*" />
+	<snark in = "love" out = "in bed!" chance = "2" author = "*" />
+	<snark in = "want" out = "in bed!" chance = "12" author = "*" />
+	<snark in = "can" out = "in bed!" chance = "12" author = "*" />
+	<snark in = "like" out = "in bed!" chance = "12" author = "*" />
+	<snark in = "should" out = "in bed!" chance = "12" author = "*" />
+	<snark in = "use" out = "in bed!" chance = "12" author = "*" />
+	<snark in = "try" out = "in bed!" chance = "12" author = "*" />
+	<snark in = ":o" out = ":O" chance = "3" author = "*" />
+	<snark in = "i am great" out = "no you're not!" author = "cppbot" />
 </snark>
