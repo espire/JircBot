@@ -1,4 +1,14 @@
+package com.jircbot;
+
 import java.io.*;
+
+/*
+ * Topic
+ *
+ * A JircBot module that reads and writes the topic.
+ *
+ * Author: Eli Spiro (elispiro@gmail.com)
+ */
 
 class Topic {
 	

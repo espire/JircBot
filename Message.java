@@ -1,5 +1,15 @@
+package com.jircbot;
+
 import java.util.Calendar;
 import java.text.SimpleDateFormat;
+
+/*
+ * Message
+ *
+ * A message from the IRC server. Parsed from raw server blargtext.
+ *
+ * Author: Eli Spiro (elispiro@gmail.com)
+ */
 
 public class Message {
 	public static final String timeFormat = "HH:mm:ss";

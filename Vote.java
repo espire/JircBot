@@ -1,4 +1,13 @@
+package com.jircbot;
+
 import java.util.Random;
+
+/*
+* Vote
+*
+* A JircBot module that votes on things.
+* Author: Eli Spiro (elispiro@gmail.com)
+*/
 
 class Vote {
 	

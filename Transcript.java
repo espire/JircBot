@@ -1,4 +1,14 @@
+package com.jircbot;
+
 import java.util.Stack;
+
+/*
+ * Transcript
+ *
+ * A JircBot module that remembers the conversation and spits it back.
+ *
+ * Author: Eli Spiro (elispiro@gmail.com)
+ */
 
 class Transcript {
 

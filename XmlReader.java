@@ -1,6 +1,4 @@
-/*
-XmlReader
-*/
+package com.jircbot;
 
 import java.io.File;
 import javax.xml.parsers.DocumentBuilder;
@@ -10,6 +8,15 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Element;
 import java.util.ArrayList;
+
+/*
+ * XmlReader
+ *
+ * A basic class to read basic XML files. That are exactly as they should be.
+ *
+ * Author: Eli Spiro (elispiro@gmail.com)
+ */
+
 
 public class XmlReader {
 	

@@ -1,6 +1,16 @@
+package com.jircbot;
+
 import org.w3c.dom.Element;
 import java.util.ArrayList;
 import java.util.Random;
+
+/*
+ * Snark
+ *
+ * A context-sensitive snarking module for JircBot.
+ *
+ * Author: Eli Spiro (elispiro@gmail.com)
+ */
 
 class Snark {
 	

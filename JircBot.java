@@ -1,15 +1,18 @@
+package com.jircbot;
+
 import java.io.*;
 import java.net.*;
 import java.util.Stack;
 import java.util.Random;
 import java.lang.String;
 
-// For web page title get, to be added eventually
-/*import java.io.DataInputStream;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;*/
+/*
+ * JircBot
+ *
+ * An IRC client that does precisely what it means to.
+ *
+ * Author: Eli Spiro (elispiro@gmail.com)
+ */
 
 public class JircBot {
 
