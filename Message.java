@@ -1,5 +1,3 @@
-package com.jircbot;
-
 import java.util.Calendar;
 import java.text.SimpleDateFormat;
 

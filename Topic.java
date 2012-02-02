@@ -1,5 +1,3 @@
-package com.jircbot;
-
 import java.io.*;
 
 /*
@@ -35,11 +33,11 @@ class Topic {
 		
 		String ret = "";
 		
-	 	if (message.type.equals("PRIVMSG") && message.content.toLowerCase().startsWith("!topic ") && message.content.length() > 7 ) {
+	 	if (message.type.equals("PRIVMSG") && message.content.toLowerCase().startsWith("@topic ") && message.content.length() > 7 ) {
 			writer.write("TOPIC " + channel + " :" + message.content.substring(7) + "\r\n");
 			writer.flush();
 		}
-		else if (message.type.equals("PRIVMSG") && message.content.toLowerCase().equals("!topic")) {
+		else if (message.type.equals("PRIVMSG") && message.content.toLowerCase().equals("@topic")) {
 			writer.write("TOPIC " + channel + "\r\n");
 			writer.flush();
 			String temp = reader.readLine();

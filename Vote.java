@@ -1,13 +1,12 @@
-package com.jircbot;
-
 import java.util.Random;
 
 /*
-* Vote
-*
-* A JircBot module that votes on things.
-* Author: Eli Spiro (elispiro@gmail.com)
-*/
+ * Vote
+ *
+ * A JircBot module that votes on things.
+ *
+ * Author: Eli Spiro (elispiro@gmail.com)
+ */
 
 class Vote {
 	
@@ -26,8 +25,8 @@ class Vote {
 		String ret = "";
 		String question = "";
 		
-		if (message.content.toLowerCase().startsWith("!vote")) {
-			if (message.content.length() > 6 && message.content.toLowerCase().startsWith("!vote ")) {
+		if (message.content.toLowerCase().startsWith("@vote")) {
+			if (message.content.length() > 6 && message.content.toLowerCase().startsWith("@vote ")) {
 				question = message.content.substring(6);
 				while(question.charAt(question.length()-1) == '?') {
 					question = question.substring(0,question.length()-2);

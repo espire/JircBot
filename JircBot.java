@@ -1,5 +1,3 @@
-package com.jircbot;
-
 import java.io.*;
 import java.net.*;
 import java.util.Stack;
@@ -151,7 +149,7 @@ public class JircBot {
 					
 					//  MODULES
 					if ((message.type.equals("PRIVMSG") || message.type.equals("ACTION")) && !message.author.equals(nick)) {
-						if(message.content.toLowerCase().equals("!reload")) {
+						if(message.content.toLowerCase().equals("@reload")) {
 							System.err.println();
 							break mainLoop;
 						}

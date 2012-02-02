@@ -1,5 +1,3 @@
-package com.jircbot;
-
 import java.util.Stack;
 
 /*
@@ -29,7 +27,7 @@ class Transcript {
 		
 		String ret = "";
 		
-		if (message.type.equals("PRIVMSG") && message.content.toLowerCase().startsWith("!lst")) {
+		if (message.type.equals("PRIVMSG") && message.content.toLowerCase().startsWith("@lst")) {
 			tempScript.clear();
 			tempScript.addAll(transcript);
 			if (tempScript.empty()) {
@@ -44,7 +42,7 @@ class Transcript {
 				}
 			}
 		}
-		else if (message.type.equals("PRIVMSG") && message.content.toLowerCase().startsWith("!moar")) {
+		else if (message.type.equals("PRIVMSG") && message.content.toLowerCase().startsWith("@moar")) {
 			if (tempScript.empty()) {
 				ret = "No moar.";
 			}

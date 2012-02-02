@@ -1,5 +1,3 @@
-package com.jircbot;
-
 import java.io.File;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -12,7 +10,7 @@ import java.util.ArrayList;
 /*
  * XmlReader
  *
- * A basic class to read basic XML files. That are exactly as they should be.
+ * A basic class to read basic XML files. That are formed exactly as expected.
  *
  * Author: Eli Spiro (elispiro@gmail.com)
  */
@@ -27,7 +25,11 @@ public class XmlReader {
 	public String getElement(String tagName) {
 		NodeList nl = root.getElementsByTagName(tagName);
 		Element el = (Element)nl.item(0);
-		return el.getFirstChild().getNodeValue();
+		if (el.getFirstChild() == null) {
+			return "";
+		} else {
+			return el.getFirstChild().getNodeValue();
+		}
 	}
 	
 	// get an Array of the XML file, given the number of columns
