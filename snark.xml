@@ -10,4 +10,8 @@
 	<snark in = "try" out = "in bed!" chance = "12" author = "*" />
 	<snark in = ":o" out = ":O" chance = "3" author = "*" />
 	<snark in = "i am great" out = "no you're not!" author = "cppbot" />
+	<prefix in = ">mfw" out = ">yfw" />
+	<prefix in = ">mfw i" out = ">yfw you" />
+	<prefix in = ">mfw you" out = ">yfw I" />
+	<prefix in = ">implying" out = ">implying implying" />
 </snark>

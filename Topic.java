@@ -19,7 +19,13 @@ class Topic {
 	
 	Message tempMessage;
 	
-	public Topic(BufferedWriter writer, BufferedReader reader, String channel) {
+	// the command prefix
+	String command;
+	
+	public Topic(String command, BufferedWriter writer, BufferedReader reader, String channel) {
+		
+		this.command = command;
+		
 		System.err.println("Loading Topic module...");
 		
 		this.writer = writer;
@@ -33,11 +39,11 @@ class Topic {
 		
 		String ret = "";
 		
-	 	if (message.type.equals("PRIVMSG") && message.content.toLowerCase().startsWith("@topic ") && message.content.length() > 7 ) {
+	 	if (message.type.equals("PRIVMSG") && message.content.toLowerCase().startsWith(command + "topic ") && message.content.length() > 7 ) {
 			writer.write("TOPIC " + channel + " :" + message.content.substring(7) + "\r\n");
 			writer.flush();
 		}
-		else if (message.type.equals("PRIVMSG") && message.content.toLowerCase().equals("@topic")) {
+		else if (message.type.equals("PRIVMSG") && message.content.toLowerCase().equals(command + "topic")) {
 			writer.write("TOPIC " + channel + "\r\n");
 			writer.flush();
 			String temp = reader.readLine();

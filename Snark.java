@@ -18,17 +18,40 @@ class Snark {
 	// the list of words to snark
 	ArrayList<Element> list;
 	
-	public Snark() {
+	// the command prefix
+	String command;
+	
+	public Snark(String command) {
+		
+		this.command = command;
+		
 		System.err.println("Loading Snark module:");
 		XmlReader snarkXml = new XmlReader("snark.xml");
 		list = snarkXml.toList();
 		
 		for (Element e : list) {
-			System.out.print("Snark: " + e.getAttribute("in") + " -> " + e.getAttribute("out") + ", 1 out of " + e.getAttribute("chance") + " times");
-			if (e.getAttribute("author").equals("*")) {
-				System.out.println(" for anyone.");
+			if (e.getTagName().equals("snark")) {
+				System.out.print("Snark: ");
+			}
+			else if (e.getTagName().equals("replace")) {
+				System.out.print("Replace: ");
+			}
+			else if (e.getTagName().equals("prefix")) {
+				System.out.println("Prefix: ");
+			}
+			
+			System.out.print(e.getAttribute("in") + " -> " + e.getAttribute("out") + ", ");
+			
+			if (e.getAttribute("chance").equals("")) {
+				System.out.print("every time");
 			} else {
-				System.out.println(" for " + e.getAttribute("author") + ".");
+				System.out.print("1 out of " + e.getAttribute("chance") + " times ");
+			}
+			
+			if (e.getAttribute("author").equals("")) {
+				System.out.println("for anyone.");
+			} else {
+				System.out.println("for " + e.getAttribute("author") + ".");
 			}
 		}
 		
@@ -43,10 +66,17 @@ class Snark {
 		
 		// go through the list of snarks and give each one a chance to snark
 		for (Element e : list) {
-			if (content.contains(e.getAttribute("in"))
-				&& (e.getAttribute("author").equals(author) || e.getAttribute("author").equals("*"))) {
-				if (randomGenerator.nextInt(Integer.parseInt(e.getAttribute("chance"))) == 0) {
-					responses.add(e.getAttribute("out"));
+			if (e.getAttribute("author").equals(author) || e.getAttribute("author").equals("")) {
+				if (e.getAttribute("chance").equals("") || randomGenerator.nextInt(Integer.parseInt(e.getAttribute("chance"))) == 0) {
+					if (e.getTagName().equals("snark") && content.contains(e.getAttribute("in"))) {
+						responses.add(e.getAttribute("out"));
+					}
+					else if (e.getTagName().equals("replace") && content.contains(e.getAttribute("in"))) {
+						responses.add(content.replace(e.getAttribute("in"), e.getAttribute("out")));
+					}
+					else if (e.getTagName().equals("prefix") && content.startsWith(e.getAttribute("in"))) {
+						responses.add(content.replaceFirst(e.getAttribute("in"), e.getAttribute("out")));
+					}
 				}
 			}
 		}

@@ -13,7 +13,13 @@ class Transcript {
 	static Stack<Message> transcript; // main transcript
 	static Stack<Message> tempScript; // temporary transcript for lst module
 	
-	public Transcript() {
+	// command prefix
+	String command;
+	
+	public Transcript(String command) {
+		
+		this.command = command;
+		
 		System.err.println("Loading Transcript module...");
 		
 		// Create the transcripts
@@ -27,7 +33,7 @@ class Transcript {
 		
 		String ret = "";
 		
-		if (message.type.equals("PRIVMSG") && message.content.toLowerCase().startsWith("@lst")) {
+		if (message.type.equals("PRIVMSG") && message.content.toLowerCase().startsWith(command + "lst")) {
 			tempScript.clear();
 			tempScript.addAll(transcript);
 			if (tempScript.empty()) {
@@ -42,7 +48,7 @@ class Transcript {
 				}
 			}
 		}
-		else if (message.type.equals("PRIVMSG") && message.content.toLowerCase().startsWith("@moar")) {
+		else if (message.type.equals("PRIVMSG") && message.content.toLowerCase().startsWith(command + "moar")) {
 			if (tempScript.empty()) {
 				ret = "No moar.";
 			}

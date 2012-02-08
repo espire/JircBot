@@ -4,14 +4,13 @@ import java.util.Stack;
 import java.util.Random;
 import java.lang.String;
 
-/*
+/**
  * JircBot
  *
  * An IRC client that does precisely what it means to.
  *
  * Author: Eli Spiro (elispiro@gmail.com)
  */
-
 public class JircBot {
 
 	// Connection details. These will be loaded in from the configuration XML file.
@@ -22,6 +21,7 @@ public class JircBot {
 	static String name;
 	static String channel;
 	static String joinMessage;
+	static String command;
 	
 	static XmlReader conf;
 
@@ -60,6 +60,7 @@ public class JircBot {
 		name = conf.getElement("name");
 		channel = conf.getElement("channel");
 		joinMessage = conf.getElement("joinMessage");
+		command = conf.getElement("command");
 
 		// Temporary variables for manipulation
 		Message tempMessage;
@@ -78,10 +79,10 @@ public class JircBot {
 			reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
 			// Initialize modules.
-			snarker = new Snark();
-			vote = new Vote();
-			transcript = new Transcript();
-			topic = new Topic(writer, reader, channel);
+			snarker = new Snark(command);
+			vote = new Vote(command);
+			transcript = new Transcript(command);
+			topic = new Topic(command, writer, reader, channel);
 
 			// Log on to the server.
 			writer.write("NICK " + nick + "\r\n");
@@ -149,7 +150,7 @@ public class JircBot {
 					
 					//  MODULES
 					if ((message.type.equals("PRIVMSG") || message.type.equals("ACTION")) && !message.author.equals(nick)) {
-						if(message.content.toLowerCase().equals("@reload")) {
+						if(message.content.toLowerCase().equals(command + "reload")) {
 							System.err.println();
 							break mainLoop;
 						}
