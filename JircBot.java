@@ -149,8 +149,10 @@ public class JircBot {
 					System.out.println(message);
 					
 					//  MODULES
-					if ((message.type.equals("PRIVMSG") || message.type.equals("ACTION")) && !message.author.equals(nick)) {
-						if(message.content.toLowerCase().equals(command + "reload")) {
+					if ((message.getType().equals(Message.Type.PRIVMSG) ||
+							message.getType().equals(Message.Type.PRIVMSG)) &&
+							!message.getAuthor().equals(nick)) {
+						if(message.getContent().toLowerCase().equals(command + "reload")) {
 							System.err.println();
 							break mainLoop;
 						}

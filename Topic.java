@@ -39,11 +39,14 @@ class Topic {
 		
 		String ret = "";
 		
-	 	if (message.type.equals("PRIVMSG") && message.content.toLowerCase().startsWith(command + "topic ") && message.content.length() > 7 ) {
-			writer.write("TOPIC " + channel + " :" + message.content.substring(7) + "\r\n");
+	 	if (message.getType().equals(Message.Type.PRIVMSG) &&
+	 			message.getContent().toLowerCase().startsWith(command + "topic ") &&
+	 			message.getContent().length() > 7 ) {
+			writer.write("TOPIC " + channel + " :" + message.getContent().substring(7) + "\r\n");
 			writer.flush();
 		}
-		else if (message.type.equals("PRIVMSG") && message.content.toLowerCase().equals(command + "topic")) {
+		else if (message.getType().equals(Message.Type.PRIVMSG) &&
+				message.getContent().toLowerCase().equals(command + "topic")) {
 			writer.write("TOPIC " + channel + "\r\n");
 			writer.flush();
 			String temp = reader.readLine();

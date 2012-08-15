@@ -33,7 +33,8 @@ class Transcript {
 		
 		String ret = "";
 		
-		if (message.type.equals("PRIVMSG") && message.content.toLowerCase().startsWith(command + "lst")) {
+		if (message.getType().equals(Message.Type.PRIVMSG) &&
+				message.getContent().toLowerCase().startsWith(command + "lst")) {
 			tempScript.clear();
 			tempScript.addAll(transcript);
 			if (tempScript.empty()) {
@@ -48,7 +49,8 @@ class Transcript {
 				}
 			}
 		}
-		else if (message.type.equals("PRIVMSG") && message.content.toLowerCase().startsWith(command + "moar")) {
+		else if (message.getType().equals(Message.Type.PRIVMSG) &&
+				message.getContent().toLowerCase().startsWith(command + "moar")) {
 			if (tempScript.empty()) {
 				ret = "No moar.";
 			}
@@ -62,10 +64,11 @@ class Transcript {
 			}
 		}
 		
-		if (message.type.equals("ACTION") || message.type.equals("PRIVMSG")) {
+		if (message.getType().equals(Message.Type.ACTION) ||
+				message.getType().equals(Message.Type.PRIVMSG)) {
 			transcript.push(message);
 		}
-		if (message.content.contains("Password accepted -- you are now recognized.")) {
+		if (message.getContent().contains("Password accepted -- you are now recognized.")) {
 			transcript.clear();
 		}
 		

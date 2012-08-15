@@ -30,15 +30,16 @@ class Vote {
 		String ret = "";
 		String question = "";
 		
-		if (message.content.toLowerCase().startsWith(command + "vote")) {
-			if (message.content.length() > 6 && message.content.toLowerCase().startsWith(command + "vote ")) {
-				question = message.content.substring(6);
+		if (message.getContent().toLowerCase().startsWith(command + "vote")) {
+			if (message.getContent().length() > 6 &&
+					message.getContent().toLowerCase().startsWith(command + "vote ")) {
+				question = message.getContent().substring(6);
 				while(question.charAt(question.length()-1) == '?') {
 					question = question.substring(0,question.length()-2);
 				}
 				ret = question + "? Yes: " + percent + " No: " + (100 - percent);
 			}
-			else if (message.content.length() <= 6) {
+			else if (message.getContent().length() <= 6) {
 				ret = "Yes: " + percent + " No: " + (100 - percent);
 			}
 			

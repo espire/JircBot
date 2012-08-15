@@ -61,8 +61,8 @@ class Snark {
 	public String feed(Message message) {
 		
 		ArrayList<String> responses = new ArrayList<String>();
-		String content = message.content.toLowerCase();
-		String author = message.author.toLowerCase();
+		String content = message.getContent().toLowerCase();
+		String author = message.getAuthor().toLowerCase();
 		
 		// go through the list of snarks and give each one a chance to snark
 		for (Element e : list) {
