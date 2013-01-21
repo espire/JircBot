@@ -46,6 +46,31 @@ public class JircBot {
 		}
 	}
 
+	/**
+	 * Reads a line. If it's a PING, sends a PONG.
+	 * We must respond to PINGs to avoid being disconnected.
+	 *
+	 * @return true if we responded, otherwise false.
+	 */
+	public static boolean pong(String line) throws Exception {
+		if (line.toLowerCase().startsWith("ping ")) {
+			System.out.print("|");
+			for(int i = 0; i < randomGenerator.nextInt(16); i++) {
+				System.out.print(" ");
+			}
+			System.out.print(".");
+			for(int i = 0; i < randomGenerator.nextInt(16); i++) {
+				System.out.print(" ");
+			}
+			System.out.println("ping!");
+
+			writer.write("PONG " + line.substring(5) + "\r\n");
+			writer.flush();
+			return true;
+		}
+		return false;
+	}
+
 	public static void main(String[] args) throws Exception {
 	
 		// load in the main configuration XML file
@@ -86,12 +111,13 @@ public class JircBot {
 
 			// Log on to the server.
 			writer.write("NICK " + nick + "\r\n");
-			writer.write("USER " + login + " 0 * : " + name + "\r\n");
+			writer.write("USER " + login + " 0 * :" + name + "\r\n");
 			writer.flush();
 
 			// Read lines from the server until it ends the MOTD.
 			String line = null;
 			while ((line = reader.readLine()) != null) {
+				pong(line);
 				if (line.indexOf("376") >= 0) {
 					// We are now logged in.
 					break;
@@ -104,7 +130,7 @@ public class JircBot {
 			}
 
 			// Identify with NickServ
-			writer.write("PRIVMSG NickServ IDENTIFY "+ password +"\r\n");
+			writer.write("PRIVMSG NickServ :IDENTIFY "+ password +"\r\n");
 			writer.flush();
 
 			// Join the channel.
@@ -125,20 +151,9 @@ public class JircBot {
 
 				if (line.toLowerCase().startsWith(":" + nick) || line.toLowerCase().startsWith(":" + server) || line.toLowerCase().startsWith(":chanserv!")) {}
 
-				else if (line.toLowerCase().startsWith("ping ")) {
-					System.out.print("|");
-					for(int i = 0; i < randomGenerator.nextInt(16); i++) {
-						System.out.print(" ");
-					}
-					System.out.print(".");
-					for(int i = 0; i < randomGenerator.nextInt(16); i++) {
-						System.out.print(" ");
-					}
-					System.out.println("ping!");
 					
-					// We must respond to PINGs to avoid being disconnected.
-					writer.write("PONG " + line.substring(5) + "\r\n");
-					writer.flush();
+				else if (pong(line)) {
+					continue;
 				}
 				
 				else {
