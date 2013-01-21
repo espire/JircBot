@@ -37,6 +37,7 @@ public class JircBot {
 	static Vote vote;
 	static Transcript transcript;
 	static Topic topic;
+	static Link link;
 
 	// Message the channel and flush the buffer.
 	public static void say(String line) throws Exception {
@@ -108,6 +109,7 @@ public class JircBot {
 			vote = new Vote(command);
 			transcript = new Transcript(command);
 			topic = new Topic(command, writer, reader, channel);
+			link = new Link(command);
 
 			// Log on to the server.
 			writer.write("NICK " + nick + "\r\n");
@@ -175,6 +177,7 @@ public class JircBot {
 						say(snarker.feed(message));
 						say(transcript.feed(message));
 						say(topic.feed(message));
+						say(link.feed(message));
 					}
 					
 				} // else
